@@ -7,10 +7,21 @@ const typeDefs = `#graphql
   type User {
     _id: ID
     name: String
-    username: String!
-    email: String!
-    password: String!
+    username: String
+    email: String
+    password: String
+    followers: [ Follow ]
+    followings: [ Follow ]
   }
+
+  type Follow {
+    _id: ID
+    followingId: ID
+    followerId: ID
+    createdAt: String
+    updatedAt: String
+  }
+
 
   type Token{
     accessToken: String
@@ -39,8 +50,9 @@ const resolvers = {
             return user
         },
         userById: async (_, args) => {
-            console.log(args, "<< args");
-            const user = await User.findById(args._id);
+            // console.log(args, "<< args");
+            const { _id } = args;
+            const user = await User.findById(_id);
             return user;
         }
 
@@ -62,7 +74,8 @@ const resolvers = {
                 const token = {
                     accessToken: signToken({
                         id: user._id,
-                        email: user.email
+                        email: user.email,
+                        username: user.username
                     })
                 }
 
@@ -74,20 +87,39 @@ const resolvers = {
         },
         register: async (_, { name, username, email, password }) => {
             try {
+                const isValidEmail = (email) => {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return emailRegex.test(email);
+                };
+                
+                if (!isValidEmail(email)) {
+                    throw new GraphQLError('Invalid email format');
+                }
+
+                const existingUsername = await User.findByUsername(username);
+                if (existingUsername) {
+                    throw new GraphQLError('Username is already taken');
+                }
+
+                const existingEmail = await User.findByEmail(email);
+                if (existingEmail) {
+                    throw new GraphQLError('Email is already registered');
+                }
+
                 const newUser = {
                     name,
                     username,
                     email,
-                    password: await hashPass(password)
+                    password: hashPass(password)
                 };
                 const result = await User.createOne(newUser);
 
                 newUser._id = result.insertedId;
                 return newUser;
             } catch (error) {
+                console.log(error);
                 throw new GraphQLError('Registration failed');
             }
-
         },
     },
 };

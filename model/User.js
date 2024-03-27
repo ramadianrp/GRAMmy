@@ -24,7 +24,7 @@ class User {
                 username: username
             },
             {
-                fields: { password: 0 }
+                fields: { "password": 0 }
             }
         );
         return user
@@ -35,11 +35,40 @@ class User {
         return newUser;
     }
 
-    static async findById(id){
-        const user = await this.userCollection().findOne({
-            _id: new ObjectId(String(id))
-        });
-        return user
+    static async findById(id) {
+        const agg = [
+            {
+                $match: {
+                    _id: new ObjectId(String(id))
+                },
+            },
+            {
+                $lookup: {
+                    from: "Follow",
+                    localField: "_id",
+                    foreignField: "followingId",
+                    as: "followers",
+                },
+            },
+            {
+                $lookup: {
+                    from: "Follow",
+                    localField: "_id",
+                    foreignField: "followerId",
+                    as: "followings",
+                },
+            },
+            {
+                $project: {
+                    password: 0
+                },
+            },
+        ];
+
+        const cursor = this.userCollection().aggregate(agg);
+        const result = await cursor.toArray();
+        // console.log(result[0]);
+        return result[0];
     }
 
 }

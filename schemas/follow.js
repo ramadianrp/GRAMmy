@@ -28,7 +28,9 @@ const resolvers = {
                 createdAt: new Date(),
                 updatedAt: new Date()
             }; 
-            await Follow.insertOne(follow);
+            const result = await Follow.insertOne(follow);
+
+            follow._id = result.insertedId
 
             return follow;
         }

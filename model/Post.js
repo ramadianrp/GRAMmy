@@ -1,21 +1,21 @@
 const { ObjectId } = require('mongodb');
 const { database } = require('../config/mongo');
 
-class User {
-    static userCollection(){
+class Post {
+    static postCollection(){
         return database.collection('Post');
     }
 
     static async findAll() {
-        const users = await this.userCollection().find().toArray();
-        return users;
+        const posts = await this.postCollection().find().toArray();
+        return posts;
     }
 
     static async createOne(payload){
-        const newUser = await this.userCollection().insertOne(payload);
-        return newUser;
+        const newPost = await this.postCollection().insertOne(payload);
+        return newPost;
     }
 
 }
 
-module.exports = User;
+module.exports = Post;

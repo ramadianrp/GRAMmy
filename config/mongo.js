@@ -26,20 +26,19 @@ const client = new MongoClient(uri, {
 // --------------------------------------- 
 
 // connect to mongo
-async function connectToMongoDB(uri) {
-  try {
-    const uri = process.env.MONGODB_URI;
-    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    await client.connect();
-    console.log('Connected to MongoDB');
+// async function connectToMongoDB() {
+//   try {
+//     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+//     await client.connect();
+//     console.log('Connected to MongoDB');
 
-    return client;
-  } catch (error) {
-    console.error('Failed connection to MongoDB:', error);
-    throw error;
-  }
-}
-connectToMongoDB()
+//     return client.db("GC01_IG");
+//   } catch (error) {
+//     console.error('Failed connection to MongoDB:', error);
+//     throw error;
+//   }
+// }
+// connectToMongoDB()
 
 
 // -------------------------------------

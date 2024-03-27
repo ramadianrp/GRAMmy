@@ -15,6 +15,11 @@ class Follow {
         const newFollow = await this.postCollection().insertOne(payload);
         return newFollow;
     }
+    
+    static async insertOne(payload){
+        const newFollow = await this.postCollection().insertOne(payload);
+        return newFollow;
+    }
 
 }
 

@@ -2,7 +2,6 @@ const { GraphQLError } = require('graphql');
 const User = require('../model/User');
 const { comparePass, hashPass } = require('../helpers/bycrpt');
 const { signToken } = require('../helpers/jwt');
-const bcrypt = require('../helpers/bycrpt');
 
 const typeDefs = `#graphql
   type User {

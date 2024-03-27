@@ -42,8 +42,9 @@ const resolvers = {
         },
     },
     Mutation: {
-        createPost: async (_, { content, tags, imgUrl, authorId, comments, likes }) => {
+        createPost: async (_, { content, tags, imgUrl, authorId, comments, likes }, contextValue) => {
             try {
+                contextValue.auth()
                 const newPost = {
                     content,
                     tags,

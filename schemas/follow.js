@@ -1,33 +1,37 @@
 const { GraphQLError } = require('graphql');
 const Follow = require('../model/Follow');
+const { ObjectId } = require('mongodb');
 
 const typeDefs = `#graphql
   type Follow {
     _id: ID
     followingId: ID
     followerId: ID
-    createdAt: Date
-    updatedAt: Date
-  }
-
-  type Query {
-    follow: [Follow]
+    createdAt: String
+    updatedAt: String
   }
 
   type Mutation{
-  
+    follow(id: ID): Follow
   }
 `;
 
 const resolvers = {
-    Query: {
-        follow: async () => {
-            const users = await Follow.findAll();
-            return users;
-        },
-    },
     Mutation: {
-        
+        follow: async (_, args, contextValue) => {
+            contextValue.auth()
+            const user = await contextValue.auth();
+            // console.log(user, "<<< user");
+            const follow = {
+                followingId: new ObjectId(args.id),
+                followerId: user.id,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            }; 
+            await Follow.insertOne(follow);
+
+            return follow;
+        }
     },
 };
 

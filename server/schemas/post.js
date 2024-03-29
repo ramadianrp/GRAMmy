@@ -55,32 +55,32 @@ const resolvers = {
             try {
                 contextValue.auth();
                 if (!args._id) throw new Error("Id is required");
-        
+
                 const post = await Post.findById(args._id);
-        
+
                 return post[0];
-              } catch (error) {
+            } catch (error) {
                 throw error;
-              }
-        
+            }
         },
         postsNewer: async (_, __, contextValue) => {
             try {
-              contextValue.auth();
-      
-              const redisPost = await redis.get("Post");
-              if(redisPost) {
-                return JSON.parse(redisPost)
-              } else {
-                const posts = await Post.findAll();
-                await redis.set("Post", JSON.stringify(posts));
-                
-                return posts;
-              }
+                contextValue.auth();
+
+                const redisPost = await redis.get("Post");
+                // console.log(redisPost, ">>> redisPost");
+                if (redisPost) {
+                    return JSON.parse(redisPost)
+                } else {
+                    const posts = await Post.findAll();
+                    await redis.set("Post", JSON.stringify(posts));
+                    // console.log(posts, ">>> posts");
+                    return posts;
+                }
             } catch (error) {
-              throw error;
+                throw error;
             }
-          }
+        }
     },
     Mutation: {
         createPost: async (_, { content, tags, imgUrl }, contextValue) => {

@@ -10,6 +10,7 @@ const typeDefs = `#graphql
     username: String
     email: String
     password: String
+    picUrl: String
     followers: [ Follow ]
     followings: [ Follow ]
   }
@@ -34,7 +35,7 @@ const typeDefs = `#graphql
   }
 
   type Mutation{
-    register(name: String, username: String, email: String, password: String): User
+    register(name: String, username: String, email: String, password: String, picUrl: String): User
     login(username: String, password: String): Token
   }
 `;
@@ -110,6 +111,7 @@ const resolvers = {
                     name,
                     username,
                     email,
+                    picUrl,
                     password: hashPass(password)
                 };
                 const result = await User.createOne(newUser);

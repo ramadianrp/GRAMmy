@@ -13,6 +13,7 @@ const typeDefs = `#graphql
     tags: [String]
     imgUrl: String
     authorId: ID 
+    username: String   
     comments: [Comments]
     likes: [Likes]
     createdAt: Date
@@ -96,6 +97,7 @@ const resolvers = {
                     tags,
                     imgUrl,
                     authorId,
+                    username: currentUser.username,
                     comments: [],
                     likes: [],
                     createdAt: new Date().toISOString(),

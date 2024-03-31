@@ -8,6 +8,8 @@ import AuthContext from "../context/auth";
 import * as SecureStore from "expo-secure-store";
 
 
+
+
 const LOGIN = gql`
   mutation Login($username: String, $password: String) {
   login(username: $username, password: $password) {
@@ -16,7 +18,8 @@ const LOGIN = gql`
 }
 `
 
-function Login({ navigation }) {
+function Login() {
+  const navigation = useNavigation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -36,6 +39,7 @@ function Login({ navigation }) {
     try {
       await login({ variables: { username, password } });
       navigation.navigate("Home");
+
     } catch (err) {
       console.log(err.message, "<<<<<< ini login");
       alert(err.message);
@@ -45,19 +49,36 @@ function Login({ navigation }) {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator 
+        size="large" 
+        />
       </View>
     );
   }
 
-  if (error) {
-    console.log(JSON.stringify(error));
-    return (
-      <View>
-       <Text>`error ${error.message}`</Text> 
-      </View>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <Text
+  //         style={{
+  //           textAlign: "center",
+  //           color: "black",
+  //           fontWeight: "bold",
+  //           fontSize: 15,
+  //           marginTop: 50
+  //         }}
+  //       >
+  //         {error.message}
+  //       </Text>
+  //       <Button
+  //         title="Try Again"
+  //         onPress={() => {
+  //           navigation.navigate("Login");
+  //         }}
+  //       />
+  //     </View>
+  //   );
+  // }
 
 
 

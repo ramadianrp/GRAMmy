@@ -12,9 +12,14 @@ class User {
     }
 
     static async findByEmail(email) {
-        const user = await this.userCollection().findOne({
-            email: email
-        });
+        const user = await this.userCollection().findOne(
+            {
+                email: email
+            },
+            {
+                fields: { "password": 0 }
+            }
+        );
         return user
     }
 

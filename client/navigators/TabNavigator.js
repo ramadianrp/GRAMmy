@@ -6,10 +6,18 @@ import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SearchScreen from '../screens/SearchScreen';
 import AddPostScreen from '../screens/AddPostScreen';
+import { useContext } from 'react';
+import AuthContext from '../context/auth';
+import * as SecureStore from "expo-secure-store";
+import { useNavigation } from '@react-navigation/native';
+
 
 const Tab = createBottomTabNavigator();
 
 function TabNavigator() {
+    const { setIsSignedIn, isSignedIn } = useContext(AuthContext);
+
+
     return (
         <Tab.Navigator
             screenOptions={
@@ -25,7 +33,8 @@ function TabNavigator() {
                                 padding: 10
                             }}
                             onPress={async () => {
-                                console.log('logout pressed');
+                                await SecureStore.deleteItemAsync("accessToken");
+                                setIsSignedIn(false);;
                             }}
                         />
                     ),

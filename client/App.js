@@ -5,6 +5,7 @@ import TabNavigator from "./navigators/TabNavigator";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ApolloProvider } from "@apollo/client";
 import client from "./config/apollo";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 
 
@@ -12,10 +13,12 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <NavigationContainer>
-        <SafeAreaView style={{ flex: 1 }}>
-          {/* <TabNavigator /> */}
-          <StackNavigator />
-        </SafeAreaView>
+        <GestureHandlerRootView>
+          <SafeAreaView style={{ flex: 1 }}>
+            <StackNavigator />
+            {/* <TabNavigator /> */}
+          </SafeAreaView>
+        </GestureHandlerRootView>
       </NavigationContainer>
     </ApolloProvider>
   );

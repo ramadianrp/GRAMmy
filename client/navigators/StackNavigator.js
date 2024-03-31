@@ -1,24 +1,53 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-const Stack = createNativeStackNavigator()
-
-import LoginScreen from "../screens/Login"
-import HomeScreen from "../screens/HomeScreen"
-import RegisterScreen from "../screens/RegisterScreen";
+import { NavigationContainer } from "@react-navigation/native";
+import Login from "../screens/Login";
 import TabNavigator from "./TabNavigator";
+import DetailScreen from "../screens/ProfileScreen";
+import RegisterScreen from "../screens/RegisterScreen";
+import { useState } from "react";
+const Stack = createNativeStackNavigator();
+import { setContext } from "@apollo/client/link/context";
+import * as SecureStore from "expo-secure-store";
+import AuthContext from "../context/auth";
 
+function StackNavigator() {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  (async () => {
+    const accessToken = await SecureStore.getItemAsync("accessToken");
+    if (accessToken) {
+      setIsSignedIn(true);
+    }
+  })();
 
-function StackNavigator(){
-    return(
-        <Stack.Navigator>
-            {/* <Stack.Screen name="Login" component={LoginScreen}/> */}
-            <Stack.Screen name="Register" component={RegisterScreen}/>
-            <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
-        </Stack.Navigator>
-    )
+  return (
+    <AuthContext.Provider value={{ isSignedIn, setIsSignedIn }}>
+      <Stack.Navigator>
+        {!isSignedIn ? (
+          <>
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Register"
+              component={RegisterScreen}
+              options={{ headerShown: false }}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              name="Home"
+              component={TabNavigator}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="Detail" component={DetailScreen} />
+          </>
+        )}
+      </Stack.Navigator>
+    </AuthContext.Provider>
+  );
 }
 
 export default StackNavigator;
-
-
-
-

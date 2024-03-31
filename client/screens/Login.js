@@ -1,11 +1,66 @@
-import { View, Text, Button, TextInput } from "react-native";
+import { View, Text, Button, TextInput, ActivityIndicator } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Register } from "../screens/RegisterScreen";
+import { Register } from "./RegisterScreen";
+import { gql, useMutation } from "@apollo/client";
+import { useContext, useState } from "react";
+import AuthContext from "../context/auth";
+import * as SecureStore from "expo-secure-store";
+
+
+const LOGIN = gql`
+  mutation Login($username: String, $password: String) {
+  login(username: $username, password: $password) {
+    accessToken
+  }
+}
+`
+
+function Login({ navigation }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { setIsSignedIn } = useContext(AuthContext);
+
+  const [login, { data, loading, error }] = useMutation(LOGIN, {
+    onCompleted: async (data) => {
+      await SecureStore.setItemAsync("accessToken", data?.login.accessToken);
+      setIsSignedIn(true);
+    }
+  });
+
+  // console.log({ data, loading, error });
+
+
+  async function handleSubmit() {
+    try {
+      await login({ variables: { username, password } });
+      navigation.navigate("Home");
+    } catch (err) {
+      console.log(err.message, "<<<<<< ini login");
+      alert(err.message);
+    }
+  }
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (error) {
+    console.log(JSON.stringify(error));
+    return (
+      <View>
+       <Text>`error ${error.message}`</Text> 
+      </View>
+    );
+  }
 
 
 
-function Login() {
   return (
     <View style={{ flex: 1, justifyContent: 'center' }}>
       <View>
@@ -15,7 +70,7 @@ function Login() {
             color: 'black',
             marginBottom: 15,
             fontFamily: 'Helvetica',
-            fontWeight: 'bold',
+            // fontWeight: 'bold',
             fontSize: 20,
           }}
         >
@@ -23,7 +78,9 @@ function Login() {
         </Text>
       </View>
       <TextInput
-        placeholder="Email"
+        placeholder="Username"
+        onChangeText={setUsername}
+        value={username}
         style={{
           height: '5%',
           borderWidth: 0.5,
@@ -36,6 +93,8 @@ function Login() {
 
       <TextInput
         placeholder="Password"
+        onChangeText={setPassword}
+        value={password}
         secureTextEntry={true}
         style={{
           height: '5%',
@@ -60,6 +119,7 @@ function Login() {
 
         >
           <Text
+            onPress={handleSubmit}
             style={{
               textAlign: "center",
               color: "white",
@@ -78,14 +138,16 @@ function Login() {
             color: "black",
             fontWeight: "bold",
             fontSize: 15,
-            marginTop: 30
+            marginTop: 50
           }}
         >
           Don't have an account? Sign up below
         </Text>
         <Button
-          title="Register"
-          onPress={() => navigation.navigate("Register")}
+          title="Sign up"
+          onPress={() => {
+            navigation.navigate("Register")
+          }}
         />
       </View>
 

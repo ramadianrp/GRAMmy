@@ -35,7 +35,7 @@ const typeDefs = `#graphql
 
   type Mutation{
     register(name: String, username: String, email: String, password: String): User
-    login(email: String, password: String): Token
+    login(username: String, password: String): Token
   }
 `;
 
@@ -60,21 +60,21 @@ const resolvers = {
     Mutation: {
         login: async (_, args) => {
             try {
-                const { email, password } = args
-                const user = await User.findByEmail(email)
+                console.log('masukkkk <<<');
+                const { username, password } = args
+                const user = await User.findByUsername(username)
                 if (!user) {
-                    throw new Error('Invalid credentials (email/password) user')
+                    throw new Error('Invalid credentials (username/password) user')
                 }
 
                 const validated = comparePass(password, user.password);
                 if (!validated) {
-                    throw new Error('Invalid credentials (email/password) pass');
+                    throw new Error('Invalid credentials (username/password) pass');
                 }
 
                 const token = {
                     accessToken: signToken({
                         id: user._id,
-                        email: user.email,
                         username: user.username
                     })
                 }
